@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "facemark.iOS", "facemark.iO
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "facemark", "facemark\facemark.csproj", "{3D903C66-1D4F-49F3-ABD3-E2BC0D13C6F5}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "facemark.AI", "facemark.AI", "{B7AFEFD9-99C6-4E0F-9B53-4268ADF87441}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
