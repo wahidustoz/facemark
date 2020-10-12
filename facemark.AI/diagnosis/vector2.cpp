@@ -124,6 +124,8 @@ double pointToLine(vector2 p, vector2 a, vector2 b) {
 
 /*----------------------------------------------------------------------------------*/
 // 아래는 <정사각형 자르기> - BOJ_1604 코드
+// 면적개수 계산 , 교점 개수 판단
+
 typedef pair<vector2, vector2> line;
 int N;
 vector<line> v;
