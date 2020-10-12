@@ -75,6 +75,23 @@ bool lineIntersection(vector2 a, vector2 b, vector2 c, vector2 d, vector2& x) {
     return true;
 }
 
+//두 벡터의 사이각(세타)
+double intervalAngle(vector2 a, vector2 b) {
+	return acos(a.dot(b) / a.norm()*b.norm());
+}
+
+//단순 다각형 p의 넓이를 구한다.
+double area(const vector<vector2>&p){
+    double ret=0;
+    for(int i=0;i<p.size();i++)
+    {
+        int j=(i+1)%p.size();
+        //ret+=p[i].cross(p[j]);
+        ret+=p[i].x*p[j].y-p[j].x*p[i].y;
+    }
+    return fabs(ret)/2.0;
+}
+
 // lineIntersection결과가 false: 두직선이 평행할때
 bool paralleSegments(vector2 a, vector2 b, vector2 c, vector2 d, vector2& p) {
     if (b < a) swap(a, b); // 벡터ab 방향이 ba라면 ab로 바꿔줌
