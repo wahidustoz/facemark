@@ -1,5 +1,7 @@
 #include <bits/stdc++.h>
 using namespace std;
+const double EPSILON = 1e-9;
+const double PI = acos(-1);
 
 struct vector2 {
     double x, y;
@@ -42,6 +44,11 @@ double area(const vector<vector2>&p){
     return fabs(ret)/2.0;
 }
 
+//두 벡터의 사이각(rad) *180/PI 해줘야 각도 나옴
+double intervalAngle(vector2 a, vector2 b) {
+	return acos(a.dot(b) / (a.norm()*b.norm()));
+}
+
 int N;
 vector<vector2> v;
 
@@ -54,5 +61,11 @@ int main() {
     }
 
     double res=area(v);
-    cout<<res;
+    cout<<res<<'\n';
+
+    // 두 벡터 사이 각 출력 예시
+    vector2 a,b;
+    a = vector2(1,1);
+    b = vector2(1,0);
+    cout<<intervalAngle(a,b)*180/PI;
 }

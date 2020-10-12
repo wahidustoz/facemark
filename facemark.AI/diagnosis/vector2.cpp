@@ -75,9 +75,9 @@ bool lineIntersection(vector2 a, vector2 b, vector2 c, vector2 d, vector2& x) {
     return true;
 }
 
-//두 벡터의 사이각(세타)
+//두 벡터의 사이각(rad) *180/PI 해줘야 각도 나옴
 double intervalAngle(vector2 a, vector2 b) {
-	return acos(a.dot(b) / a.norm()*b.norm());
+	return acos(a.dot(b) / (a.norm()*b.norm()));
 }
 
 //단순 다각형 p의 넓이를 구한다.
