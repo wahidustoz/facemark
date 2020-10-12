@@ -17,5 +17,5 @@
     > filename = 'image.jpg'
     > points = landmarks.get_landmarks(filename)    # return landmarks as a dict
     >
-    > x44, y13 = points[44].x, points[13].y
+    > 44x, 13y = points[44].x, points[13].y
     ```
