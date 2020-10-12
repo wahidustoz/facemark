@@ -1,5 +1,4 @@
 // 벡터 C++ 코드
-// vector computation code
 
 #include <bits/stdc++.h>
 using namespace std;
@@ -62,7 +61,7 @@ int ccw(vector2 p, vector2 a, vector2 b) {
     else if(ret < 0) return -1;
     else return 1;
 }
-ll ccw2(vector2 p, vector2 a, vector2 b) { // 면적계산용( BOJ_2166 참고 )
+ll ccw2(vector2 p, vector2 a, vector2 b) {
     ll ret = (a-p).cross(b-p);
     return ret;
 }
@@ -140,7 +139,7 @@ double pointToLine(vector2 p, vector2 a, vector2 b) {
 }
 
 /*----------------------------------------------------------------------------------*/
-// 아래는 <정사각형 자르기> - BOJ_1604 코드
+// 아래는 <정사각형 자르기>
 // 면적개수 계산 , 교점 개수 판단 예시
 
 typedef pair<vector2, vector2> line;
