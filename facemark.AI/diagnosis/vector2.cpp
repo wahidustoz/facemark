@@ -1,98 +1,98 @@
 // 벡터 C++ 코드
 
-#include <bits/stdc++.h>
+#include <math.h>
+#include <algorithm>
+#include <vector>
 using namespace std;
 #define xx first
 #define yy second
-typedef long long ll;
-const double EPSILON = 1e-9;
+const double EPSILON = 1e-8;
 const double PI = acos(-1);
 
-struct vector2 {
+struct POINT {
     double x, y;
-    vector2(double x_=0, double y_=0) :x(x_), y(y_){}
-    
-    bool operator==(const vector2& jcu) const {
+    POINT(double x_=0, double y_=0) :x(x_), y(y_){}
+    bool operator==(const POINT& jcu) const {
         return x == jcu.x && y == jcu.y;
     }
-    bool operator<(const vector2& jcu) const {
+    bool operator<(const POINT& jcu) const {
         return x != jcu.x ? x < jcu.x : y < jcu.y;
     }
-    vector2 operator+(const vector2& jcu) const {
-        return vector2(x + jcu.x, y + jcu.y);
+    
+    POINT operator+(const POINT& jcu) const {
+        return POINT(x + jcu.x, y + jcu.y);
     }
-    vector2 operator-(const vector2& jcu) const {
-        return vector2(x - jcu.x, y - jcu.y);
+    POINT operator-(const POINT& jcu) const {
+        return POINT(x - jcu.x, y - jcu.y);
     }
-    vector2 operator*(double jcu) const {
-        return vector2(x * jcu, y * jcu);
+    POINT operator*(double jcu) const {
+        return POINT(x * jcu, y * jcu);
     }
     //벡터길이 반환
     double norm() const { return hypot(x,y); }
+    // 내적,외적
+    double dot(const POINT& jcu) const {
+        return x * jcu.x + y * jcu.y;
+    }
+    double cross(const POINT& jcu) const {
+        return x * jcu.y - jcu.x * y;
+    }
+
+    /********************Temp st**********************/
     //단위벡터 반환, 영벡터에 대해 호출한 경우 반환 값은 정의되지 않음
-    vector2 normalize() const {
-        return vector2(x/norm(), y/norm());
+    POINT normalize() const {
+        return POINT(x/norm(), y/norm());
+    }
+    //이 벡터를 jcu에 사영한 결과
+    POINT project(const POINT& jcu) const{
+        POINT r = jcu.normalize();
+        return r*r.dot(*this);
     }
     // x축의 양의 방향으로부터 이 벡터까지 반시계 방향으로 잰 각도
     double polar() const {return fmod(atan2(y, x)+2*PI, 2*PI); }
-    // 내적,외적
-    double dot(const vector2& jcu) const {
-        return x * jcu.x + y * jcu.y;
-    }
-    double cross(const vector2& jcu) const {
-        return x * jcu.y - jcu.x * y;
-    }
-    //이 벡터를 jcu에 사영한 결과
-    vector2 project(const vector2& jcu) const{
-        vector2 r = jcu.normalize();
-        return r*r.dot(*this);
-    }
+
+    /********************Temp end**********************/
 };
 
-// a가 b보다 p에 얼마나 가까운지
-double howMuchCloser(vector2 p, vector2 a, vector2 b){
-    return (b-p).norm() - (a-p).norm();
-}
-
-// 반환을 0,1,-1로 안해주면 밑의 다른함수에서 ccw()*ccw()계산이 4제곱이기 때문에 오버플로우 발생가능
-int ccw(vector2 p, vector2 a, vector2 b) {
+// 직선 ab에 대해 점p의 위치 확인 (시계,반시계)
+int ccw(POINT p, POINT a, POINT b) {
     double ret = (a-p).cross(b-p);
     if (fabs(ret) < EPSILON) return 0;
     else if(ret < 0) return -1;
     else return 1;
 }
-ll ccw2(vector2 p, vector2 a, vector2 b) {
-    ll ret = (a-p).cross(b-p);
+// 외적값 그대로 출력 -> 넓이출력
+double ccw2(POINT p, POINT a, POINT b) {
+    double ret = (a-p).cross(b-p);
     return ret;
 }
 
+//두 벡터의 사이각(rad) *180/PI 해줘야 각도 나옴
+double intervalAngle(POINT a, POINT b) {
+	return acos(a.dot(b) / (a.norm()*b.norm()));
+}
+
 // 같은 직선상에 놓인경우(기울기 같은경우) false리턴
-bool lineIntersection(vector2 a, vector2 b, vector2 c, vector2 d, vector2& x) {
+bool lineIntersection(POINT a, POINT b, POINT c, POINT d, POINT& x) {
     double det = (b - a).cross(d - c);
     if (fabs(det) < EPSILON) return false;
     x = a + (b - a) * ((c - a).cross(d - c) / det);
     return true;
 }
 
-//두 벡터의 사이각(rad) *180/PI 해줘야 각도 나옴
-double intervalAngle(vector2 a, vector2 b) {
-	return acos(a.dot(b) / (a.norm()*b.norm()));
-}
-
 //단순 다각형 p의 넓이를 구한다.
-double area(const vector<vector2>&p){
+double area(const vector<POINT>&p){
     double ret=0;
     for(int i=0;i<p.size();i++)
     {
         int j=(i+1)%p.size();
-        //ret+=p[i].cross(p[j]);
-        ret+=p[i].x*p[j].y-p[j].x*p[i].y;
+        ret+=p[i].cross(p[j]);
     }
     return fabs(ret)/2.0;
 }
 
 // lineIntersection결과가 false: 두직선이 평행할때
-bool paralleSegments(vector2 a, vector2 b, vector2 c, vector2 d, vector2& p) {
+bool paralleSegments(POINT a, POINT b, POINT c, POINT d, POINT& p) {
     if (b < a) swap(a, b); // 벡터ab 방향이 ba라면 ab로 바꿔줌
     if (d < c) swap(c, d); // 벡터cd 방향이 dc라면 cd로 바꿔줌
     // 평행하지만 같은 직선에 있지않으면 ccw에 의해, 같은 직선위지만 선분ab,cd가 최소 한 점에서 교차하지 않으면 false
@@ -102,12 +102,13 @@ bool paralleSegments(vector2 a, vector2 b, vector2 c, vector2 d, vector2& p) {
     return true;
 }
 // 선분(ab)위 점(p)인지 확인
-bool inBoundingRectangle(vector2 p, vector2 a, vector2 b) {
+bool inBoundingRectangle(POINT p, POINT a, POINT b) {
     if (b < a) swap(a, b);
     return p == a || p == b || (a < p && p < b);
 }
 
-bool segmentIntersection(vector2 a, vector2 b, vector2 c, vector2 d, vector2& p) {
+// 선분 ab , 선분cd의 교차점 p판별
+bool segmentIntersection(POINT a, POINT b, POINT c, POINT d, POINT& p) {
     if (!lineIntersection(a, b, c, d, p))
         return paralleSegments(a, b, c, d, p);
     return inBoundingRectangle(p, a, b) && inBoundingRectangle(p, c, d);
@@ -115,7 +116,7 @@ bool segmentIntersection(vector2 a, vector2 b, vector2 c, vector2 d, vector2& p)
 
 // 교차여부만 판별
 const int MAX = 4;
-int segmentIntersects(vector2 a, vector2 b, vector2 c, vector2 d) {
+int segmentIntersects(POINT a, POINT b, POINT c, POINT d) {
     if (ccw(a, b, c) == 0 && ccw(a, b, d) == 0) { // 두선분 모두 한 직선위 일때
         if (b < a) swap(a, b);
         if (d < c) swap(c, d);
@@ -129,67 +130,21 @@ int segmentIntersects(vector2 a, vector2 b, vector2 c, vector2 d) {
         return ab <= 0 && cd <= 0;
     }
 }
+
+
+/*----------------------------------------------------------------------------------*/
+// temp func
+
+// a가 b보다 p에 얼마나 가까운지
+double howMuchCloser(POINT p, POINT a, POINT b){
+    return (b-p).norm() - (a-p).norm();
+}
+
 // 점 p에서 (a,b)직선에 내린 수선의 발 구함
-vector2 perpendicularFoot(vector2 p, vector2 a, vector2 b){
+POINT perpendicularFoot(POINT p, POINT a, POINT b){
     return a + (p-a).project(b-a);
 }
 //점p와 (a,b)직선 사이의 거리를 구한다.
-double pointToLine(vector2 p, vector2 a, vector2 b) {
+double pointToLine(POINT p, POINT a, POINT b) {
     return (p - perpendicularFoot(p,a,b)).norm();
-}
-
-/*----------------------------------------------------------------------------------*/
-// 아래는 <정사각형 자르기>
-// 면적개수 계산 , 교점 개수 판단 예시
-
-typedef pair<vector2, vector2> line;
-int N;
-vector<line> v;
-vector<line> st;
-vector2 sq[4] = {{-10.0,-10.0},{10.0,-10.0},{10.0,10.0},{-10.0,10.0}};
-
-int main() {
-    ios_base::sync_with_stdio(0);
-    cin.tie(0);
-    cin >> N;
-    for (int i = 0; i < N; i++) {
-        double a, b, c, d;
-        cin >> a >> b >> c >> d;
-        v.push_back(line(vector2(a, b), vector2(c, d)));
-    }
-
-    int cp=0;
-    for (int i = 0; i < v.size(); i++) {
-        cp=0;
-        for (int j = 0; j < 4; j++) {
-            vector2 p = sq[j];
-            vector2 q = sq[(j + 1) % 4];
-            cp += segmentIntersects(v[i].xx, v[i].yy, p,q);
-            if (cp >= MAX) {cp=MAX; break;}
-            if (segmentIntersects(v[i].xx, v[i].yy, p,p)) {
-                cp--;
-            }
-        }
-        if(cp==2) st.push_back(v[i]);
-    }
-
-    int cnt = 0;
-    vector2 chk;
-    for (int i = 0; i < st.size(); i++) {
-        for (int j = i + 1; j < st.size(); j++) {
-            bool flag = 0;
-            if (segmentIntersection(st[i].xx, st[i].yy, st[j].xx, st[j].yy, chk)) {
-                for(int k=0; k<4; k++){
-                    vector2 p = sq[k];
-                    vector2 q = sq[(k + 1) % 4];
-                    if(ccw(chk,p,q)>0) continue;
-                    else {flag=1; break;}
-                }
-                if (flag) continue;
-                else cnt++;
-            }
-        }
-    }
-    if(st.size()) cout<<st.size()+1+cnt;
-    else cout<<1;
 }
